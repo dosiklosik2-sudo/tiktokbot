@@ -29,8 +29,8 @@ URL_RE = re.compile(r"https?://(?:[\w-]+\.)?tiktok\.com/\S+")
 
 # 1) H.264 без водяного знака  2) любой без водяного знака  3) что угодно
 FORMAT = (
-    "b[vcodec^=avc1][format_note!*=watermarked?]"
-    "/b[format_note!*=watermarked?]"
+    "b[vcodec^=avc1][format_note!*=?watermarked]"
+    "/b[format_note!*=?watermarked]"
     "/b"
 )
 
