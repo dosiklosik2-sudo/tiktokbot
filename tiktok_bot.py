@@ -29,8 +29,8 @@ URL_RE = re.compile(r"https?://(?:[\w-]+\.)?tiktok\.com/\S+")
 
 # 1) H.264 без водяного знака  2) любой без водяного знака  3) что угодно
 FORMAT = (
-    "b[vcodec^=avc1][format_note!*=?watermarked]"
-    "/b[format_note!*=?watermarked]"
+    "b[vcodec^=avc1][format_note!*=watermarked?]"
+    "/b[format_note!*=watermarked?]"
     "/b"
 )
 
@@ -203,10 +203,15 @@ async def main():
     dp.include_router(admin.router)
     dp.include_router(user_router)
 
-    from aiogram.client.session.aiohttp import AiohttpSession
+    # Прокси нужен только на домашнем ПК с VPN. На Railway переменную PROXY_URL не задавай.
+    proxy = os.getenv("PROXY_URL")
+    if proxy:
+        from aiogram.client.session.aiohttp import AiohttpSession  # нужен pip install aiohttp-socks
 
-    session = AiohttpSession(proxy="socks5://127.0.0.1:10808")
-    await dp.start_polling(Bot(TOKEN, session=session))
+        bot = Bot(TOKEN, session=AiohttpSession(proxy=proxy))
+    else:
+        bot = Bot(TOKEN)
+    await dp.start_polling(bot)
 
 
 if __name__ == "__main__":
