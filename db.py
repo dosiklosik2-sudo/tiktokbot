@@ -1,8 +1,15 @@
+import os
 import sqlite3
 import time
 from pathlib import Path
 
-conn = sqlite3.connect(Path(__file__).with_name("bot.db"))
+# Railway сам задаёт RAILWAY_VOLUME_MOUNT_PATH, когда к сервису подключён Volume.
+# Локально (на ПК) база просто лежит рядом с кодом.
+_data_dir = Path(os.getenv("RAILWAY_VOLUME_MOUNT_PATH") or os.getenv("DATA_DIR") or Path(__file__).parent)
+_data_dir.mkdir(parents=True, exist_ok=True)
+DB_PATH = _data_dir / "bot.db"
+
+conn = sqlite3.connect(DB_PATH)
 conn.row_factory = sqlite3.Row
 conn.executescript(
     """
